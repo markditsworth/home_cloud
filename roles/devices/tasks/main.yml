@@ -1,0 +1,12 @@
+---
+- name: verify that params are defined
+  fail:
+  when: (mountpoints is not defined) or (len(mountpoints)<1)
+
+- name: mount drives
+  mount_drives:
+    mountpoints: "{{ mountpoints }}"
+  register: mount_result
+
+- debug:
+    var: mount_result

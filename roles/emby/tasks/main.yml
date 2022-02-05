@@ -1,0 +1,42 @@
+---
+- name: pull emby docker image
+  docker_image:
+    pull: yes
+    state: present
+    tag: latest
+    name: emby/embyserver
+
+- name: create volumes parameter
+  set_fact:
+    emby_volumes:
+      - /media/mark/ssd1:/mnt/ssd1
+
+- debug:
+    var: emby_volumes
+
+- name: run emby server
+  docker_container:
+    image: emby/embyserver:latest
+    name: embyserver
+    restart: yes
+    restart_policy: always
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    devices:
+      - /dev/video10:/dev/video10
+      - /dev/video11:/dev/video11
+      - /dev/video12:/dev/video12
+    env:
+      UID: "{{ uid | int }}"
+      GID: "{{ gid | int }}"
+      GIDLIST: "{{ gidlist | int }}"
+    network_mode: host
+    published_ports:
+      - 8096:8096
+      - 8920:8920
+    volumes: emby_volumes
+
+
+    
+    

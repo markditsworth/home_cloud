@@ -1,0 +1,107 @@
+---
+- hosts: "{{ ansible_hosts }}"
+  tags: setup
+  become: yes
+  vars_files:
+    - vars/stacks/{{ ansible_hosts }}/default_vars.yml
+  tasks:
+    - name: create group {{ host_user }}
+      group:
+        name: "{{ host_user }}"
+        state: present
+      
+    - name: allow group {{ host_user }} to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: "^%{{ host_user }}"
+        line: "%{{ host_user }} ALL=(ALL:ALL) NOPASSWD: ALL"
+        validate: 'visudo -cf %s'
+
+    - name: create user {{ host_user }}
+      user:
+        name: "{{ host_user }}"
+        groups: "{{ host_user }}"
+        shell: /bin/bash
+    
+    - name: setup ssh public key
+      authorized_key:
+        user: "{{ host_user }}"
+        state: present
+        key: "{{ lookup('file', './mwd.pem.pub') }}"
+
+- hosts: "{{ ansible_hosts }}"
+  tags: validate
+  become: no
+  gather_facts: no
+  vars_files:
+    - vars/stacks/{{ ansible_hosts }}/vars.yml
+  tasks:
+    - name: verify ssh access with {{ ansible_user }}
+      command: whoami
+      register: who_am_i
+    
+    - debug:
+        msg: "{{ who_am_i.stdout }}"
+    
+    - name: validate user
+      fail:
+      when: who_am_i.stdout != ansible_user
+   
+    - name: verify sudo access
+      command: whoami
+      become: yes
+      register: sudo_who_am_i
+    
+    - debug:
+        msg: "{{ sudo_who_am_i.stdout }}"
+    
+    - name: validate root
+      fail:
+      when: sudo_who_am_i.stdout != "root"
+      
+- hosts: "{{ ansible_hosts }}"
+  tags: commit
+  become: yes
+  vars_files:
+    - vars/stacks/{{ ansible_hosts }}/vars.yml
+  tasks:
+    - name: remove ssh access for ubuntu
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        state: present
+        regexp: "^DenyUsers"
+        line: "DenyUsers\tubuntu"
+    
+    - name: validate format
+      shell: grep DenyUsers /etc/ssh/sshd_config
+      register: ssh_denials
+    
+    - debug:
+        msg: "{{ ssh_denials.stdout }}"
+    
+    - name: restart ssh
+      service:
+        state: restarted
+        daemon_reload: yes
+        name: ssh
+
+- hosts: "{{ ansible_hosts }}"
+  tags:
+    - never
+    - restore_ubuntu
+  become: yes
+  vars_files:
+    - vars/stacks/{{ ansible_hosts }}/vars.yml
+  tasks:
+    - name: remove ssh access for ubuntu
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        state: absent
+        regexp: "^DenyUsers"
+    
+    - name: restart ssh
+      service:
+        state: restarted
+        daemon_reload: yes
+        name: ssh

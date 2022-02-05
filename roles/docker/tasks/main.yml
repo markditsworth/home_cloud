@@ -1,0 +1,53 @@
+---
+- name: install deps
+  apt:
+    force_apt_get: yes
+    update_cache: yes
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: latest
+
+- name: add docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    file: /usr/share/keyrings/docker-archive-keyring.gpg
+
+- name: get architecture
+  shell: dpkg --print-architecture
+  register: arch
+
+- name: get release
+  shell: lsb_release -cs
+  register: release
+
+- set_fact:
+    deb_command: "deb [arch={{ arch.stdout }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ release }} stable"
+
+- debug:
+    var: deb_command
+
+- name: add stable repo to sources
+  lineinfile:
+    path: /etc/apt/sources.list.d/docker.list
+    regexp: "^.+download.docker.com/linux/ubuntu.+"
+    line: "{{ deb_command }}"
+
+- name: install docker
+  apt:
+    force_apt_get: yes
+    update_cache: yes
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+- name: install docker SDK for python
+  pip:
+    executable: pip3
+    name: docker
+    state: latest
+    

@@ -1,0 +1,4 @@
+---
+ansible_user: ubuntu
+ansible_password: password
+host_user: mark

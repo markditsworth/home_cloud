@@ -1,0 +1,7 @@
+---
+dependencies:
+  - role: python3
+    tags:
+      - meta
+      - python
+      - python3
