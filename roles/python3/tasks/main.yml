@@ -4,6 +4,6 @@
     force_apt_get: yes
     update_cache: yes
     name:
-      - python3.6
+      - python3
       - python3-pip
     state: latest

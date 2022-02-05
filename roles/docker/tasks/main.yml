@@ -13,7 +13,7 @@
 - name: add docker GPG key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
-    file: /usr/share/keyrings/docker-archive-keyring.gpg
+    keyring: /usr/share/keyrings/docker-archive-keyring.gpg
 
 - name: get architecture
   shell: dpkg --print-architecture
@@ -24,7 +24,7 @@
   register: release
 
 - set_fact:
-    deb_command: "deb [arch={{ arch.stdout }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ release }} stable"
+    deb_command: "deb [arch={{ arch.stdout }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ release.stdout }} stable"
 
 - debug:
     var: deb_command
@@ -34,6 +34,7 @@
     path: /etc/apt/sources.list.d/docker.list
     regexp: "^.+download.docker.com/linux/ubuntu.+"
     line: "{{ deb_command }}"
+    create: yes
 
 - name: install docker
   apt:

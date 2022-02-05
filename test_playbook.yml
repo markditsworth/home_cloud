@@ -1,0 +1,10 @@
+---
+- hosts: "{{ ansible_hosts }}"
+  become: yes
+  vars_files:
+    - vars/stacks/{{ ansible_hosts }}/vars.yml
+  tasks:
+    - name: install docker
+      tags: docker
+      include_role:
+        name: docker
