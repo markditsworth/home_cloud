@@ -4,7 +4,9 @@
   vars_files:
     - vars/stacks/{{ ansible_hosts }}/vars.yml
   tasks:
-    - name: install docker
-      tags: docker
+    - name: mount drive
       include_role:
-        name: docker
+        name: devices
+      vars:
+        mountpoints:
+          - /media/mark/ssd1

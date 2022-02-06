@@ -1,12 +1,40 @@
 ---
+- debug:
+    var: mountpoints
+
 - name: verify that params are defined
   fail:
-  when: (mountpoints is not defined) or (len(mountpoints)<1)
+  when: mountpoints is not defined
+
+- name: verify at least one mountpoint
+  fail:
+  when: mountpoints | length < 1
 
 - name: mount drives
   mount_drives:
     mountpoints: "{{ mountpoints }}"
   register: mount_result
 
+- set_fact:
+    device_mappings: "{{ mount_result.devices | to_json }}"
+
 - debug:
-    var: mount_result
+    var: device_mappings
+
+- name: create remounting script
+  template:
+    src: remount.sh.j2
+    dest: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
+    mode: 0755
+    owner: root
+    group: root
+  with_items: "{{ device_mappings }}"
+
+- name: regularly run remount scripts
+  cron:
+    name: remount {{ item['mountpoint'] }} to {{ item['device'] }}
+    job: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
+    user: root
+    minute: "*/15"
+  with_items: "{{ device_mappings }}"
+    
