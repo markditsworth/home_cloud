@@ -1,4 +1,18 @@
 ---
+# Install dockerized emby on raspberry pi 4
+
+# Use:
+
+# Deploying on clean Rpi
+# - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby
+#
+# If docker is already installed
+# - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby --skip-tags meta
+#
+# If media drives are already mounted
+# - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby --skip-tags drives
+########################################################################
+
 - hosts: "{{ ansible_hosts }}"
   become: yes
   vars_files:

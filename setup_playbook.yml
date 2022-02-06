@@ -1,4 +1,28 @@
 ---
+# Configures Ubuntu Server running on Raspberry Pi 4 for ssh
+#
+# Pre-steps
+# 1) connect raspberry pi to network. Attain MAC address and add appropriate entry in hosts.py
+# 2) Perform initial ssh to ubuntu (default password 'ubuntu'). Will be required to change password.
+# 3) Change it to 'password'
+#
+# Use
+# setup new user with ssh key
+#    ansible-playbook setup_playbook.yml -i hosts.ini -e ansible_hosts="<host_group>" --tags setup
+#
+# validate that ansible can ssh with new user and private key
+#    ansible-playbook setup_playbook.yml -i hosts.ini -e ansible_hosts="<host_group>" --tags validate
+#
+# commit to new user by denying ssh with ubuntu user
+#    ansible-playbook setup_playbook.yml -i hosts.ini -e ansible_hosts="<host_group>" --tags commit
+#
+# perform all above steps in one run
+#    ansible-playbook setup_playbook.yml -i hosts.ini -e ansible_hosts="<host_group>"
+#
+# reenable ssh permission for the ubuntu user
+#    ansible-playbook setup_playbook.yml -i hosts.ini -e ansible_hosts="<host_group>" --tags restore_ubuntu
+#########################################################################
+
 - hosts: "{{ ansible_hosts }}"
   tags: setup
   become: yes
