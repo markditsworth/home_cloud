@@ -1,25 +1,65 @@
 ---
-- name: pull emby docker image
-  docker_image:
-    pull: yes
-    state: present
-    tag: latest
-    name: emby/embyserver
+- debug:
+    var: media_volumes
 
-- name: create volumes parameter
-  set_fact:
-    emby_volumes:
-      - /media/mark/ssd1:/mnt/ssd1
+- fail:
+  when: media_volumes is not defined
+
+- fail:
+  when: media_volumes | length < 1
+
+- name: mount drives
+  tags:
+    - drives
+    - devices
+  include_role:
+    name: devices
+  vars:
+    mountpoints: "{{ media_volumes }}"
+
+- name: create /home/mark/emby
+  file:
+    path: /home/mark/emby
+    recurse: yes
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- set_fact:
+    mounts:
+      - propagation: rshared
+        read_only: no
+        source: /home/mark/emby
+        target: /config
+        type: bind   
+
+- set_fact:
+    mounts: "{{ [{'propagation':'rshared','read_only':'no'|bool,'source':item,'target':'/volumes/'+item.split('/')[-1],'type':'bind'}] + mounts }}"
+  with_items: "{{ media_volumes }}"
 
 - debug:
-    var: emby_volumes
+    var: mounts
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+
+- name: pull emby docker image
+  docker_image:
+    state: present
+    tag: latest
+    name: emby/embyserver_arm64v8
+    source: pull
 
 - name: run emby server
   docker_container:
-    image: emby/embyserver:latest
+    image: emby/embyserver_arm64v8:latest
     name: embyserver
     restart: yes
-    restart_policy: always
+    restart_policy: on-failure
     restart_retries: 20
     auto_remove: no
     detach: yes
@@ -28,14 +68,11 @@
       - /dev/video11:/dev/video11
       - /dev/video12:/dev/video12
     env:
-      UID: "{{ uid | int }}"
-      GID: "{{ gid | int }}"
-      GIDLIST: "{{ gidlist | int }}"
+      UID: "{{ uid | default(0) | int }}"
+      GID: "{{ gid | default(0) | int }}"
+      GIDLIST: "{{ gidlist | default(0) | int }}"
     network_mode: host
-    published_ports:
-      - 8096:8096
-      - 8920:8920
-    volumes: emby_volumes
+    mounts: "{{ mounts }}"  
 
 
     

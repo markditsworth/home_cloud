@@ -6,7 +6,7 @@
   tasks:
     - name: mount drive
       include_role:
-        name: devices
-      vars:
-        mountpoints:
-          - /media/mark/ssd1
+        name: emby
+      # vars:
+      #   media_volumes:
+      #     - /home/mark/ssd1

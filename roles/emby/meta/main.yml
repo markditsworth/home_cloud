@@ -4,11 +4,3 @@ dependencies:
     tags:
       - meta
       - docker
-  
-  - role: devices
-    mountpoints:
-      - "/media/mark/ssd1"
-    tags:
-      - meta
-      - devices
-      - drives
