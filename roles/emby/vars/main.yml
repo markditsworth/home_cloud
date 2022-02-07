@@ -1,0 +1,5 @@
+---
+media_volumes:
+  - /home/mark/ssd1
+home_directory: /home/mark/emby
+local_backup_store: /run/media/markd/WD/Snapshots/emby/

@@ -2,11 +2,17 @@
 - debug:
     var: media_volumes
 
+- debug:
+    var: home_directory
+
 - fail:
   when: media_volumes is not defined
 
 - fail:
   when: media_volumes | length < 1
+
+- fail:
+  when: home_directory is not defined
 
 - name: mount drives
   tags:
@@ -17,20 +23,29 @@
   vars:
     mountpoints: "{{ media_volumes }}"
 
-- name: create /home/mark/emby
+- name: create "{{ home_directory }}"
   file:
-    path: /home/mark/emby
+    path: "{{ home_directory }}"
     recurse: yes
     state: directory
     mode: 0755
     owner: root
     group: root
 
+- name: restore "{{ home_directory }}"
+  unarchive:
+    src: "{{ local_backup_store }}{{ restore_snapshot }}"
+    dest: "{{ home_directory }}"
+    group: root
+    owner: root
+    mode: 0755
+  when: restore_snapshot is defined
+
 - set_fact:
     mounts:
       - propagation: rshared
         read_only: no
-        source: /home/mark/emby
+        source: "{{ home_directory }}"
         target: /config
         type: bind   
 

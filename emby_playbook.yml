@@ -1,9 +1,9 @@
 ---
-# Install dockerized emby on raspberry pi 4
+# Install dockerized emby on raspberry pi 4 running ubuntu server
 
 # Use:
 
-# Deploying on clean Rpi
+# Deploying on clean ubuntu server
 # - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby
 #
 # If docker is already installed
@@ -11,16 +11,35 @@
 #
 # If media drives are already mounted
 # - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby --skip-tags drives
+#
+# Once Emby is setup, snapshot the config directory and store offsite
+# - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby --tags snapshot --skip-tags meta
+#
+# To use the snapshotted config directory on a fresh install
+# - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby -e restore_snapshot=emby_backup-2022-02-07T04:30:10Z.tar.gz
 ########################################################################
 
 - hosts: "{{ ansible_hosts }}"
+  tags: install
   become: yes
   vars_files:
     - vars/stacks/{{ ansible_hosts }}/vars.yml
   tasks:
-    - name: mount drive
+    - name: install emby
       include_role:
         name: emby
-      # vars:
-      #   media_volumes:
-      #     - /home/mark/ssd1
+
+- hosts: "{{ ansible_hosts }}"
+  tags:
+    - never
+    - backup
+    - snapshot
+  become: yes
+  vars_files:
+    - vars/stacks/{{ ansible_hosts }}/vars.yml
+  tasks:
+    - name: backup config directory
+      include_role:
+        name: emby
+        tasks_from: snapshot
+
