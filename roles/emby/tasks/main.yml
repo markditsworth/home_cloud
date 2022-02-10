@@ -65,13 +65,13 @@
 - name: pull emby docker image
   docker_image:
     state: present
-    tag: latest
-    name: emby/embyserver_arm64v8
+    tag: "{{ image_tag }}"
+    name: "{{ docker_image }}"
     source: pull
 
 - name: run emby server
   docker_container:
-    image: emby/embyserver_arm64v8:latest
+    image: "{{ docker_image }}:{{ image_tag }}"
     name: embyserver
     restart: yes
     restart_policy: on-failure
