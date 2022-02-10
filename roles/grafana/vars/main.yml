@@ -1,0 +1,3 @@
+---
+docker_image:  grafana/grafana-oss
+image_tag: latest
