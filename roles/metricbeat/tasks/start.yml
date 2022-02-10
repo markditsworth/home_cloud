@@ -1,0 +1,6 @@
+---
+- name: start metricbeat
+  docker_container:
+    name: metricbeat
+    restart: yes
+    state: started

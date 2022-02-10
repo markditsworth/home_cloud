@@ -1,0 +1,5 @@
+---
+- name: stop metricbeat
+  docker_container:
+    name: metricbeat
+    state: stopped

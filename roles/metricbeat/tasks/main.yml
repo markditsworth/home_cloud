@@ -1,0 +1,52 @@
+---
+- name: pull metricbeat docker image
+  docker_image:
+    state: present
+    name: "{{ docker_image }}"
+    tag: "{{ image_tag }}"
+    source: pull
+
+- name: copy configuration files
+  template:
+    src: metricbeat.docker.yml.j2
+    dest: "{{ metricbeat_yml_location }}/metricbeat.docker.yml"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: start metricbeat
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: metricbeat
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    network_mode: host
+    mounts:
+      - propagation: rshared
+        read_only: yes
+        source: "{{ metricbeat_yml_location }}/metricbeat.docker.yml"
+        target: /usr/share/metricbeat/metricbeat.yml
+        type: bind
+      - propagation: rshared
+        read_only: yes
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - propagation: rshared
+        read_only: yes
+        source: /sys/fs/cgroup
+        target: /hostfs/sys/fs/cgroup
+        type: bind
+      - propagation: rshared
+        read_only: yes
+        source: /proc
+        target: /hostfs/proc
+        type: bind
+      - propagation: rshared
+        read_only: yes
+        source: /
+        target: /hostfs
+        type: bind
