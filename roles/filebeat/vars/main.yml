@@ -1,0 +1,4 @@
+---
+docker_image: docker.elastic.co/beats/filebeat-oss
+image_tag: 8.0.0-rc2-arm64
+filebeat_yml_location: /etc/beats

@@ -1,0 +1,57 @@
+---
+- name: pull filebeat docker image
+  docker_image:
+    state: present
+    name: "{{ docker_image }}"
+    tag: "{{ image_tag }}"
+    source: pull
+
+- set_fact:
+  mounts:
+    - propagation: rshared
+      read_only: yes
+      source: "{{ filebeat_yml_location }}/filebeat.docker.yml"
+      target: /usr/share/filebeat/filebeat.yml
+      type: bind
+    - propagation: rshared
+      read_only: yes
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      type: bind
+
+- name: creat list of paths to mount to filebeat
+  set_fact:
+    mounts: "{{ [{'propagation':'rshared','read_only':'yes','type':'bind','source':item.source,'target':item.target}] + mounts }}"
+  with_items: "{{ filebeat_paths }}"
+
+- name: printout the mounts for the container
+  debug:
+    var: mounts
+
+- set_fact:
+    filebeat_logs: "{{ [item.target] + filebeat_logs|default([]) }}"
+  with_items: "{{ filebeat_paths }}"
+
+- name: print out the container logs for filebeat
+  debug:
+    var: filebeat_logs
+
+- name: copy configuration files
+  template:
+    src: filebeat.docker.yml.j2
+    dest: "{{ filebeat_yml_location }}/filebeat.docker.yml"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: start filebeat
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: filebeat
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    network_mode: host
+    mounts: "{{ mounts }}"
