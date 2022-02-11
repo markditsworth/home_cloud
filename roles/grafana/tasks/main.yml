@@ -1,0 +1,46 @@
+---
+- debug:
+    var: grafana_directory
+
+- fail:
+  when: grafana_directory is not defined
+
+- name: ensure {{ grafana_directory }} exists
+  file:
+    path: "{{ grafana_directory }}"
+    state: directory
+    owner: root
+    group: root
+    recurse: yes
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+
+- name: pull grafana docker image
+  docker_image:
+    name: "{{ docker_image }}"
+    tag: "{{ image_tag }}"
+    source: pull
+    state: present
+
+- name: start grafana
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: grafana
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    network_mode: host
+    mounts:
+      - propagation: rshared
+        read_only: no
+        source: "{{ grafana_directory }}"
+        target: /var/lib/grafana
+        type: bind
+    env:
+      GF_PATHS_DATA: /var/lib/grafana
