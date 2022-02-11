@@ -38,7 +38,7 @@
     network_mode: host
     mounts:
       - propagation: rshared
-        read_only: yes
+        read_only: no
         source: "{{ data_directory }}"
         target: /usr/share/elasticsearch/data
         type: bind
