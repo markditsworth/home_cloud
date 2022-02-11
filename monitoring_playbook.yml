@@ -1,0 +1,43 @@
+---
+- hosts: "{{ ansible_hosts }}"
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: deploy metricbeat
+      tags: metricbeat
+      include_role:
+        name: metricbeat
+
+    - name: mount devices
+      tags:
+        - devices
+        - elasticsearch
+        - elastic
+        - grafana
+      block:
+        - name: define ssd path
+          set_fact:
+            ssd_path: /home/mark/ssd1
+        
+        - name: mount device
+          include_role:
+            name: devices
+          vars:
+            mountpoints: "{{ ssd_path }}"
+    
+    - name: deploy elasticsearch
+      tags:
+        - elasticsearch
+        - elastic
+      include_role:
+        name: elasticsearch
+      vars:
+        data_directory: "{{ ssd_path }}/elasticsearch/data"
+    
+    - name: deploy grafana
+      tags:
+        - grafana
+      include_role:
+        name: grafana
+      vars:
+        grafana_directory: "{{ ssd_path }}/grafana/data"
