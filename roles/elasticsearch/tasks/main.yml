@@ -1,0 +1,46 @@
+---
+- debug:
+    var: data_directory
+
+- fail:
+  when: data_directory is not defined
+
+- name: ensure {{ data_directory }} exists
+  file:
+    path: "{{ data_directory }}"
+    state: directory
+    owner: root
+    group: root
+    recurse: yes
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+
+- name: pull elasticsearch docker image
+  docker_image:
+    name: "{{ docker_image }}"
+    tag: "{{ image_tag }}"
+    source: pull
+    state: present
+
+- name: start elasticsearch
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: elasticsearch
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    network_mode: host
+    mounts:
+      - propagation: rshared
+        read_only: yes
+        source: "{{ data_directory }}"
+        target: /usr/share/elasticsearch/data
+        type: bind
+    env:
+      discovery.type: single-node
