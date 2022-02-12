@@ -21,20 +21,28 @@
 - debug:
     var: device_mappings
 
-- name: create remounting script
-  template:
-    src: remount.sh.j2
-    dest: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
-    mode: 0755
-    owner: root
-    group: root
-  with_items: "{{ device_mappings }}"
+# - name: create remounting script
+#   template:
+#     src: remount.sh.j2
+#     dest: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
+#     mode: 0755
+#     owner: root
+#     group: root
+#   with_items: "{{ device_mappings }}"
 
-- name: regularly run remount scripts
-  cron:
-    name: remount {{ item['mountpoint'] }} to {{ item['device'] }}
-    job: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
-    user: root
-    minute: "*/15"
+# - name: regularly run remount scripts
+#   cron:
+#     name: remount {{ item['mountpoint'] }} to {{ item['device'] }}
+#     job: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
+#     user: root
+#     minute: "*/15"
+#   with_items: "{{ device_mappings }}"
+
+- name: configure autoremount of devices on reboot
+  lineinfile:
+    path: /etc/fstab
+    line: "{{ item['device'] }}\t{{ item['mountpoint'] }}\text4\tdefaults\t0\t0"
+    regexp: "^{{ item['device'] }}"
+    state: present
+    validate: mount -a
   with_items: "{{ device_mappings }}"
-    
