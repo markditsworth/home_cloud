@@ -35,6 +35,7 @@
         data_directory: "{{ ssd_path }}/elasticsearch/data"
     
     - name: deploy grafana
+      run_once: yes
       tags:
         - grafana
       include_role:
@@ -43,6 +44,7 @@
         grafana_directory: "{{ ssd_path }}/grafana/data"
     
     - name: snapshot grafana
+      run_once: yes
       tags:
         - grafana-snapshot
       include_role:
