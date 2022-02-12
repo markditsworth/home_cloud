@@ -41,3 +41,12 @@
         name: grafana
       vars:
         grafana_directory: "{{ ssd_path }}/grafana/data"
+    
+    - name: snapshot grafana
+      tags:
+        - grafana-snapshot
+      include_role:
+        name: grafana
+        tasks_from: snapshot.yml
+      vars:
+        grafana_directory: "{{ ssd_path }}/grafana/data"
