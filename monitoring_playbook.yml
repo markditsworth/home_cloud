@@ -32,26 +32,41 @@
       tags:
         - elasticsearch
         - elastic
-      include_role:
-        name: elasticsearch
-      vars:
-        data_directory: "{{ ssd_path }}/elasticsearch/data"
+      block:
+        - set_fact:
+            ssd_path: /home/mark/ssd1
+
+        - name: setup elasticsearch     
+          include_role:
+            name: elasticsearch
+          vars:
+            data_directory: "{{ ssd_path }}/elasticsearch/data"
     
     - name: deploy grafana
       run_once: yes
       tags:
         - grafana
-      include_role:
-        name: grafana
-      vars:
-        grafana_directory: "{{ ssd_path }}/grafana/data"
+      block:
+        - set_fact:
+            ssd_path: /home/mark/ssd1
+        
+        - name: setup grafana
+          include_role:
+            name: grafana
+          vars:
+            grafana_directory: "{{ ssd_path }}/grafana/data"
     
     - name: snapshot grafana
       run_once: yes
       tags:
         - grafana-snapshot
-      include_role:
-        name: grafana
-        tasks_from: snapshot.yml
-      vars:
-        grafana_directory: "{{ ssd_path }}/grafana/data"
+      block:
+        - set_fact:
+            ssd_path: /home/mark/ssd1
+
+        - name: snapshot
+          include_role:
+            name: grafana
+            tasks_from: snapshot.yml
+          vars:
+            grafana_directory: "{{ ssd_path }}/grafana/data"
