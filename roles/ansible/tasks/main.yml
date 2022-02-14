@@ -22,6 +22,14 @@
   git:
     repo: "{{ github_repo }}"
     dest: "/home/mark/home_cloud"
+  
+- name: ensure target directory location owned
+  file:
+    path: /home/mark/home_cloud
+    state: directory
+    recurse: yes
+    owner: mark
+    group: mark
 
 - name: move ssh keys
   copy:
@@ -33,4 +41,4 @@
     - src: ./mwd.pem
       dest: /home/mark/home_cloud/mwd.pem
     - src: ./mwd.pem.pub
-      dest: /home/mark/home_cloud/mwd.pem
+      dest: /home/mark/home_cloud/mwd.pem.pub
