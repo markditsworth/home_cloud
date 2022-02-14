@@ -2,6 +2,8 @@
 - hosts: "{{ ansible_hosts }}"
   become: yes
   gather_facts: no
+  vars_files:
+    - vars/stacks/monitor/vars.yml
   tasks:
     - name: deploy metricbeat
       tags: metricbeat
