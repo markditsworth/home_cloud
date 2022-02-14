@@ -1,0 +1,32 @@
+---
+- hosts: controller
+  tasks:
+    - name: install metricbeat
+      tags: metricbeat
+      include_role:
+        name: metricbeat
+    
+    - name: mount drive
+      tags:
+        - drive
+        - devices
+      block:
+        - name: mount HD
+          include_role:
+            name: devices
+          vars:
+            mountpoint:
+              - /media/mark/WD
+
+        - name: chown dir
+          file:
+            path: "{{ item }}"
+            state: directory
+            recurse: yes
+            owner: mark
+            group: mark
+    
+    - name: setup environment
+      tags: ansible
+      include_role:
+        name: ansible

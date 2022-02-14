@@ -1,0 +1,36 @@
+---
+- name: install git
+  apt:
+    name: git
+    state: latest
+
+- name: install ansible
+  pip:
+    executable: pip3
+    name: ansible
+    state: latest
+
+- name: ensure target directory location exists
+  file:
+    path: /home/mark/home_cloud
+    state: directory
+    recurse: yes
+    owner: "{{ host_user }}"
+    group: "{{ host_user }}"
+
+- name: clone repo
+  git:
+    repo: "{{ github_repo }}"
+    dest: "/home/mark/home_cloud"
+
+- name: move ssh keys
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ host_user }}"
+    group: "{{ host_user }}"
+  with_items:
+    - src: ./mwd.pem
+      dest: /home/mark/home_cloud/mwd.pem
+    - src: ./mwd.pem.pub
+      dest: /home/mark/home_cloud/mwd.pem

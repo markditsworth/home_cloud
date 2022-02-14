@@ -54,6 +54,10 @@
         state: present
         key: "{{ lookup('file', './mwd.pem.pub') }}"
 
+    - name: set hostname
+      hostname:
+        name: "{{ ansible_hosts }}"
+
 - hosts: "{{ ansible_hosts }}"
   tags: validate
   become: no

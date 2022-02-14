@@ -17,7 +17,8 @@
       block:
         - name: define ssd path
           set_fact:
-            ssd_path: /home/mark/ssd1
+            ssd_path:
+              - /home/mark/ssd1
         
         - name: mount device
           include_role:
