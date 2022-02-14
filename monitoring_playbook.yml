@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ ansible_hosts }}"
+- hosts: monitor
   become: yes
   gather_facts: no
   vars_files:
