@@ -8,7 +8,8 @@ from subprocess import Popen, run, PIPE
 BROADCAST = "192.168.1.0/24"
 
 MAC_ADDRESSES = {
-    "e4:5f:01:73:87:6a": "controller"
+    "e4:5f:01:73:87:6a": "controller",
+    "dc:a6:32:d6:cf:fb": "monitor"
 }
 
 def mapDevices(broadcast_addr=BROADCAST):
