@@ -15,8 +15,8 @@
     path: /home/mark/home_cloud
     state: directory
     recurse: yes
-    owner: "{{ host_user }}"
-    group: "{{ host_user }}"
+    owner: mark
+    group: mark
 
 - name: clone repo
   git:
@@ -27,8 +27,8 @@
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ host_user }}"
-    group: "{{ host_user }}"
+    owner: mark
+    group: mark
   with_items:
     - src: ./mwd.pem
       dest: /home/mark/home_cloud/mwd.pem

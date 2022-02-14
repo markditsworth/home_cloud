@@ -1,5 +1,8 @@
 ---
 - hosts: controller
+  become: yes
+  vars_files:
+    - vars/stacks/controller/vars.yml
   tasks:
     - name: install metricbeat
       tags: metricbeat
@@ -11,12 +14,15 @@
         - drive
         - devices
       block:
+        - set_fact:
+            drives:
+              - /media/mark/WD
+
         - name: mount HD
           include_role:
             name: devices
           vars:
-            mountpoint:
-              - /media/mark/WD
+            mountpoints: "{{ drives }}"
 
         - name: chown dir
           file:
@@ -25,8 +31,10 @@
             recurse: yes
             owner: mark
             group: mark
+          with_items: "{{ drives }}"
     
     - name: setup environment
-      tags: ansible
+      tags:
+        - ansible
       include_role:
         name: ansible

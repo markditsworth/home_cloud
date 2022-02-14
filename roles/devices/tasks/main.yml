@@ -44,5 +44,5 @@
     line: "{{ item['device'] }}\t{{ item['mountpoint'] }}\text4\tdefaults\t0\t0"
     regexp: "^{{ item['device'] }}"
     state: present
-    validate: mount -a
+    validate: mount -a %s
   with_items: "{{ device_mappings }}"
