@@ -1,8 +1,11 @@
 ---
-- name: install git
+- name: install deps
   apt:
-    name: git
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - git
+    - sshpass
 
 - name: install ansible
   pip:
