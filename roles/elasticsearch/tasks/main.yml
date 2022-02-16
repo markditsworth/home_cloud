@@ -5,12 +5,13 @@
 - fail:
   when: data_directory is not defined
 
-- name: ensure {{ data_directory }} exists
+- name: set permissions on directory
   file:
     path: "{{ data_directory }}"
     state: directory
     owner: root
     group: root
+    mode: 0777
     recurse: yes
 
 - name: restart docker
@@ -44,3 +45,4 @@
         type: bind
     env:
       discovery.type: single-node
+      network.host: 0.0.0.0

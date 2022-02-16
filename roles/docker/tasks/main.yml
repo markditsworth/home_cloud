@@ -8,7 +8,12 @@
       - curl
       - gnupg
       - lsb-release
+      - linux-modules-extra-raspi
     state: latest
+
+- name: reboot
+  reboot:
+    reboot_timeout: 600
 
 - name: add docker GPG key
   apt_key:

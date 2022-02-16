@@ -67,8 +67,8 @@ def main():
     ignore_devs = module.params['ignore_devs']
     available_devices = get_available_devices(ignore_devs)
 
-    for path in mountpoints:
-        _ = shell_command_rc(f"sudo mkdir -p {path}")
+    # for path in mountpoints:
+    #     _ = shell_command_rc(f"sudo mkdir -p {path}")
 
     if len(available_devices) != len(mountpoints):
         error_msg = f"The number of desired mountpoints ({len(mountpoints)}) does not equal the number of available devices ({len(available_devices)}). Available: {available_devices}."
@@ -76,18 +76,18 @@ def main():
     else:
         current_mappings = device_mapping(available_devices)
         assigned_mountings = assign_needed_mounts(current_mappings, mountpoints)
-        total_mountings = current_mappings.append(assigned_mountings)
+        total_mountings = [x for x in (current_mappings + assigned_mountings) if x["mountpoint"] != ""]
         change_flag = False
-        for assignment in assigned_mountings:
-            cmd = f"sudo mount {assignment['device']} {assignment['mountpoint']}"
-            rc = shell_command_rc(cmd)
-            if rc != 0:
-                error_msg = f"failed to mount {assignment['device']} to {assignment['mountpoint']}"
-                module.fail_json(msg=error_msg)
-            else:
-                change_flag = True
-        post_mappings = device_mapping(available_devices)
-        module.exit_json(changed=change_flag, devices=post_mappings)
+        # for assignment in assigned_mountings:
+        #     cmd = f"sudo mount {assignment['device']} {assignment['mountpoint']}"
+        #     rc = shell_command_rc(cmd)
+        #     if rc != 0:
+        #         error_msg = f"failed to mount {assignment['device']} to {assignment['mountpoint']}"
+        #         module.fail_json(msg=error_msg)
+        #     else:
+        #         change_flag = True
+        # post_mappings = device_mapping(available_devices)
+        module.exit_json(changed=change_flag, current=current_mappings, assigned=assigned_mountings ,devices=total_mountings)
 
 
 

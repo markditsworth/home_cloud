@@ -6,6 +6,13 @@
   fail:
   when: mountpoints is not defined
 
+- debug:
+    var: fstype
+
+- name: verify that params are defined
+  fail:
+  when: fstype is not defined
+
 - name: verify at least one mountpoint
   fail:
   when: mountpoints | length < 1
@@ -15,34 +22,23 @@
     mountpoints: "{{ mountpoints }}"
   register: mount_result
 
+- debug:
+    var: mount_result
+
 - set_fact:
     device_mappings: "{{ mount_result.devices | to_json }}"
 
 - debug:
     var: device_mappings
 
-# - name: create remounting script
-#   template:
-#     src: remount.sh.j2
-#     dest: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
-#     mode: 0755
-#     owner: root
-#     group: root
-#   with_items: "{{ device_mappings }}"
+- pause:
+    prompt: "validate the mappings"
 
-# - name: regularly run remount scripts
-#   cron:
-#     name: remount {{ item['mountpoint'] }} to {{ item['device'] }}
-#     job: /etc/remount_{{ item['mountpoint'].split('/') | last }}.sh
-#     user: root
-#     minute: "*/15"
-#   with_items: "{{ device_mappings }}"
-
-- name: configure autoremount of devices on reboot
-  lineinfile:
-    path: /etc/fstab
-    line: "{{ item['device'] }}\t{{ item['mountpoint'] }}\text4\tdefaults\t0\t0"
-    regexp: "^{{ item['device'] }}"
-    state: present
-    validate: mount -a %s
+- name: mount the drives
+  mount:
+    src: "{{ item['device'] }}"
+    path: "{{ item['mountpoint'] }}"
+    state: mounted
+    fstype: "{{ fstype }}"
+    opts: rw,user,defaults
   with_items: "{{ device_mappings }}"

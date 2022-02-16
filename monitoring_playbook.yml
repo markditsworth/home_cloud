@@ -27,6 +27,7 @@
             name: devices
           vars:
             mountpoints: "{{ ssd_path }}"
+            fstype: ext4
     
     - name: deploy elasticsearch
       tags:
