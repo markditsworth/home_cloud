@@ -1,0 +1,20 @@
+---
+- name: pull kibana docker image
+  docker_image:
+    name: "{{ docker_image }}"
+    tag: "{{ image_tag }}"
+    source: pull
+    state: present
+
+- name: start kibana
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: kibana
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    network_mode: host
+    env:
+      ELASTICSEARCH_HOSTS: "http://localhost:9200"

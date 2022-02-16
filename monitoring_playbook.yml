@@ -43,6 +43,14 @@
           vars:
             data_directory: "{{ ssd_path }}/elasticsearch/data"
     
+    - name: deploy kibana
+      run_once: yes
+      tags:
+        - kibana
+      block:
+        - include_role:
+            name: kibana
+    
     - name: deploy grafana
       run_once: yes
       tags:
