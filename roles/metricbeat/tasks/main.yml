@@ -1,10 +1,32 @@
 ---
+- name: ensure es host defined
+  fail:
+  when: elasticsearch_output_hosts is not defined
+
+- name: ensure es host defined
+  fail:
+  when: beat_hostname is not defined
+
+- debug:
+    var: elasticsearch_output_hosts
+
+# - pause:
+#     prompt: "ensure es hosts are correct"
+
 - name: pull metricbeat docker image
   docker_image:
     state: present
     name: "{{ docker_image }}"
     tag: "{{ image_tag }}"
     source: pull
+
+- name: create location for config file
+  file:
+    path: "{{ metricbeat_yml_location }}"
+    state: directory
+    owner: root
+    group: root
+    recurse: yes
 
 - name: copy configuration files
   template:
