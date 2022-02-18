@@ -1,5 +1,6 @@
 ---
 - name: find snapshots
+  delegate_to: localhost
   find:
     paths: "{{ snapshot_directory }}"
     patterns: "{{ snapshot_pattern }}"
@@ -26,6 +27,7 @@
     prompt: "verify snapshots to be deleted are correct"
 
 - name: delete the old snapshots
+  delegate_to: localhost
   file:
     path: "{{ item }}"
     state: absent
