@@ -1,0 +1,2 @@
+limit: 3
+snapshot_pattern: '*.tar.gz'

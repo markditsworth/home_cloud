@@ -1,0 +1,33 @@
+---
+- name: find snapshots
+  find:
+    paths: "{{ snapshot_directory }}"
+    patterns: "{{ snapshot_pattern }}"
+    recurse: no
+  register: findings
+
+- name: sort list of snapshots
+  set_fact:
+    snapshots: "{{ findings.files | sort(attribute='ctime') | reverse | map(attribute='path') | list }}"
+
+- name: view found snapshots
+  debug:
+    var: snapshots
+
+- name: get list of snapshots to remove
+  set_fact:
+    delete_snapshots: "{{ snapshots[limit:] }}"
+
+- name: view snapshots to be deleted
+  debug:
+    var: delete_snapshots
+
+- pause:
+    prompt: "verify snapshots to be deleted are correct"
+
+- name: delete the old snapshots
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ delete_snapshots }}"
+  when: findings.matched > limit
