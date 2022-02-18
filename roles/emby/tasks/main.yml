@@ -22,6 +22,7 @@
     name: devices
   vars:
     mountpoints: "{{ media_volumes }}"
+    fstype: exfat
 
 - name: create "{{ home_directory }}"
   file:

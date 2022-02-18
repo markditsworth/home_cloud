@@ -19,7 +19,7 @@
 # - ansible-playbook emby_playbook.yml -i hosts.ini -e ansible_hosts=emby -e restore_snapshot=emby_backup-2022-02-07T04:30:10Z.tar.gz
 ########################################################################
 
-- hosts: "{{ ansible_hosts }}"
+- hosts: emby
   tags: install
   become: yes
   vars_files:
@@ -29,7 +29,7 @@
       include_role:
         name: emby
 
-- hosts: "{{ ansible_hosts }}"
+- hosts: emby
   tags:
     - never
     - backup

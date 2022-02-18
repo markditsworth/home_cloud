@@ -1,6 +1,7 @@
 ---
 media_volumes:
   - /home/mark/ssd1
+  - /home/mark/ssd2
 home_directory: /home/mark/emby
 local_backup_store: /media/mark/WD/Snapshots/emby/
 docker_image: emby/embyserver_arm64v8
