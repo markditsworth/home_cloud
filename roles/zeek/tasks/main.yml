@@ -1,0 +1,22 @@
+---
+- name: install deps
+  apt:
+    update_cache: yes
+    name:
+      - libpcap-dev
+      - openssl
+      - bind9
+      - libz-dev
+    state: latest
+
+- name: install zeek
+  shell: |
+    echo 'deb http://download.opensuse.org/repositories/security:/zeek/xUbuntu_21.10/ /' | sudo tee /etc/apt/sources.list.d/security:zeek.list &&
+    curl -fsSL https://download.opensuse.org/repositories/security:zeek/xUbuntu_21.10/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/security_zeek.gpg > /dev/null
+
+- name: install zeek
+  apt:
+    update_cache: yes
+    name: zeek
+    state: latest
+
