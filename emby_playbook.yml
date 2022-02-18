@@ -23,7 +23,7 @@
   tags: install
   become: yes
   vars_files:
-    - vars/stacks/{{ ansible_hosts }}/vars.yml
+    - vars/stacks/emby/vars.yml
   tasks:
     - name: install emby
       include_role:
@@ -36,7 +36,7 @@
     - snapshot
   become: yes
   vars_files:
-    - vars/stacks/{{ ansible_hosts }}/vars.yml
+    - vars/stacks/emby/vars.yml
   tasks:
     - name: backup config directory
       include_role:
