@@ -34,4 +34,11 @@
     path: "{{ backup_tar }}"
     state: absent
 
-# ToDo: ensure only X backups are kept
+- name: roll off outdated snapshots
+  delegate_to: localhost
+  include_role:
+    name: rotate
+  vars:
+    snapshot_directory: "{{ local_backup_store }}"
+    snapshot_pattern: '*.tar.gz'
+    limit: 3
