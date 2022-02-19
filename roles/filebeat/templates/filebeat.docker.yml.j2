@@ -23,7 +23,7 @@ filebeat.inputs:
 
 output.elasticsearch:
   enabled: true
-  hosts: ["localhost:9200"]
+  hosts: {{ elasticsearch_output_hosts | default(['localhost:9200']) }}
 
 setup.template.settings:
 setup.ilm.enabled: true

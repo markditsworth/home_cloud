@@ -48,6 +48,7 @@
   docker_container:
     image: "{{ docker_image }}:{{ image_tag }}"
     name: filebeat
+    user: root
     restart: yes
     restart_policy: on-failure
     restart_retries: 20
