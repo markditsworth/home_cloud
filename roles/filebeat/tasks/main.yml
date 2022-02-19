@@ -7,17 +7,17 @@
     source: pull
 
 - set_fact:
-  mounts:
-    - propagation: rshared
-      read_only: yes
-      source: "{{ filebeat_yml_location }}/filebeat.docker.yml"
-      target: /usr/share/filebeat/filebeat.yml
-      type: bind
-    - propagation: rshared
-      read_only: yes
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      type: bind
+    mounts:
+      - propagation: rshared
+        read_only: yes
+        source: "{{ filebeat_yml_location }}/filebeat.docker.yml"
+        target: /usr/share/filebeat/filebeat.yml
+        type: bind
+      - propagation: rshared
+        read_only: yes
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
 
 - name: creat list of paths to mount to filebeat
   set_fact:
@@ -35,6 +35,9 @@
 - name: print out the container logs for filebeat
   debug:
     var: filebeat_logs
+
+- pause:
+    prompt: "verify params"
 
 - name: copy configuration files
   template:
