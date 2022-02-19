@@ -36,9 +36,6 @@
   debug:
     var: filebeat_logs
 
-- pause:
-    prompt: "verify params"
-
 - name: copy configuration files
   template:
     src: filebeat.docker.yml.j2

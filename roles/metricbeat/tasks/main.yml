@@ -10,9 +10,6 @@
 - debug:
     var: elasticsearch_output_hosts
 
-# - pause:
-#     prompt: "ensure es hosts are correct"
-
 - name: pull metricbeat docker image
   docker_image:
     state: present

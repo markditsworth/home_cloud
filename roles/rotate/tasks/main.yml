@@ -23,9 +23,6 @@
   debug:
     var: delete_snapshots
 
-- pause:
-    prompt: "verify snapshots to be deleted are correct"
-
 - name: delete the old snapshots
   delegate_to: localhost
   file:
