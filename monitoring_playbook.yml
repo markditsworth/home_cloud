@@ -5,11 +5,19 @@
   vars_files:
     - vars/stacks/monitor/vars.yml
   tasks:
-    - name: deploy metricbeat
+    - name: install metricbeat
       tags: metricbeat
-      include_role:
-        name: metricbeat
+      block:
+        - set_fact:
+            es_hosts: "{{ ['http://' + item + ':9200'] + es_hosts|default([]) }}"
+          with_items: "{{ groups['monitor'] }}"
 
+        - include_role:
+            name: metricbeat
+          vars:
+            beat_hostname: "controller"
+            elasticsearch_output_hosts: "{{ es_hosts }}"
+    
     - name: mount devices
       tags:
         - devices
