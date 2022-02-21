@@ -26,6 +26,9 @@ output.elasticsearch:
   hosts: {{ elasticsearch_output_hosts | default(['localhost:9200']) }}
 
 setup.template.settings:
+  index:
+    number_of_shards: 1
+    number_of_replicas: 0
 setup.ilm.enabled: true
 setup.ilm.policy_name: "default"
 logging.to_files: true
