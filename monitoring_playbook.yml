@@ -78,4 +78,4 @@
             name: grafana
             tasks_from: snapshot.yml
           vars:
-            grafana_directory: "{{ ssd_path }}/grafana/data"
+            target_directory: "{{ ssd_path }}/grafana"

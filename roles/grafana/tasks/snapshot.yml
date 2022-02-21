@@ -1,0 +1,43 @@
+---
+- fail:
+  when: item is not defined
+  with_items:
+    - "{{ target_directory }}"
+    - "{{ local_backup_store }}"
+
+- set_fact:
+    backup_tar: "{{ target_directory }}_backup-{{ ansible_date_time.iso8601 }}.tar.gz"
+
+- name: "snapshotting {{ target_directory }} to {{ backup_tar }}"
+  archive:
+    format: gz
+    path: "{{ target_directory }}/*"
+    dest: "{{ backup_tar }}"
+    exclude_path:
+      - "{{ target_directory }}/logs"
+
+- name: ensure backup store exists
+  file:
+    path: "{{ local_backup_store }}"
+    state: directory
+  delegate_to: localhost
+  become: no
+
+- name: store backup
+  fetch:
+    src: "{{ backup_tar }}"
+    dest: "{{ local_backup_store }}"
+    flat: yes
+
+- name: clean up remote archive
+  file:
+    path: "{{ backup_tar }}"
+    state: absent
+
+- name: roll off outdated snapshots
+  include_role:
+    name: rotate
+  vars:
+    snapshot_directory: "{{ local_backup_store }}"
+    snapshot_pattern: '*.tar.gz'
+    limit: 3

@@ -13,6 +13,15 @@
     group: root
     recurse: yes
 
+- name: restore "{{ home_directory }}"
+  unarchive:
+    src: "{{ local_backup_store }}{{ restore_snapshot }}"
+    dest: "{{ grafana_directory }}"
+    group: root
+    owner: root
+    mode: 0755
+  when: restore_snapshot is defined
+
 - name: restart docker
   service:
     name: docker

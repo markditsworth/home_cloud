@@ -1,3 +1,4 @@
 ---
 docker_image:  grafana/grafana-oss
 image_tag: latest
+local_backup_store: /media/mark/WD/Snapshots/grafana/
