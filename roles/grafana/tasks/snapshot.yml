@@ -14,7 +14,10 @@
     path: "{{ target_directory }}/*"
     dest: "{{ backup_tar }}"
     exclude_path:
-      - "{{ target_directory }}/logs"
+      - "{{ target_directory }}/plugins"
+      - "{{ target_directory }}/png"
+      - "{{ target_directory }}/csv"
+      - "{{ target_directory }}/alerting"
 
 - name: ensure backup store exists
   file:
