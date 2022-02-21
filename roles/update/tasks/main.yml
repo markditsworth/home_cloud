@@ -1,0 +1,26 @@
+---
+- set_fact:
+    dist_upgrade: "{{ upgrade_dist | default(no) }}"
+
+- set_fact:
+    upgrade_setting: safe
+  when: not dist_upgrade
+
+- set_fact:
+    upgrade_setting: dist
+  when: dist_upgrade
+
+- name: Update apt-cache and do dist upgrade
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    upgrade: "{{ upgrade_setting }}"
+
+- name: Check if reboot required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+
+- name: Reboot if required
+  reboot:
+  when: reboot_required_file.stat.exists == true
