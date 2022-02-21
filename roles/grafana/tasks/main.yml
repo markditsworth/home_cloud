@@ -27,6 +27,7 @@
     name: docker
     state: restarted
     daemon_reload: yes
+  when: not skip_docker_restart
 
 - name: pull grafana docker image
   docker_image:
@@ -39,6 +40,7 @@
   docker_container:
     image: "{{ docker_image }}:{{ image_tag }}"
     name: grafana
+    user: root
     restart: yes
     restart_policy: on-failure
     restart_retries: 20
