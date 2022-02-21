@@ -15,7 +15,7 @@
         - include_role:
             name: metricbeat
           vars:
-            beat_hostname: "controller"
+            beat_hostname: "monitor"
             elasticsearch_output_hosts: "{{ es_hosts }}"
     
     - name: mount devices
