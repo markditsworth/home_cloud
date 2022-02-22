@@ -1,0 +1,6 @@
+---
+- name: start jellyfin
+  docker_container:
+    name: jellyfin
+    restart: yes
+    state: started

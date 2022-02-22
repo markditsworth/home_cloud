@@ -1,0 +1,6 @@
+---
+- name: start filebeat
+  docker_container:
+    name: filebeat
+    restart: yes
+    state: started

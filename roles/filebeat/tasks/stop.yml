@@ -1,0 +1,5 @@
+---
+- name: stop filebeat
+  docker_container:
+    name: filebeat
+    state: stopped

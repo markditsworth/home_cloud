@@ -1,0 +1,113 @@
+---
+- hosts: all
+  tags:
+    - stop-metricbeat
+    - stop-beats
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: stop metricbeat
+      include_role:
+        name: metricbeat
+        tasks_from: stop
+   
+- hosts: jellyfin
+  tags:
+    - stop-filebeat
+    - stop-beats
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: stop filebeat
+      include_role:
+        name: filebeat
+        tasks_from: stop
+
+- hosts: monitor
+  tags:
+    - stop-monitor
+  become: yes
+  vars_files:
+    - vars/stacks/monitor/vars.yml
+  tasks:
+    - name: snapshot grafana
+      run_once: yes
+      tags:
+        - grafana-snapshot
+      block:
+        - set_fact:
+            ssd_path: /home/mark/ssd1
+
+        - name: snapshot
+          include_role:
+            name: grafana
+            tasks_from: snapshot.yml
+          vars:
+            target_directory: "{{ ssd_path }}/grafana/data"
+    
+    - name: stop grafana
+      run_once: yes
+      tags:
+        - stop-grafana
+      include_role:
+        name: grafana
+        tasks_from: stop
+    
+    - name: stop elasticsearch
+      run_once: yes
+      tags:
+        - stop-es
+        - stop-elastic
+        - stop-elasticsearch
+      include_role:
+        name: elasticsearch
+        tasks_from: stop
+
+- hosts: jellyfin
+  tags:
+    - stop-jellyfin
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: snapshot jellyfin data
+      tags: jellyfin-snapshot
+      include_role:
+        name: jellyfin
+        tasks_from: snapshot
+    
+    - name: stop jellyfin
+      tags:
+        - stop-jellyfin
+      include_role:
+        name: jellyfin
+        tasks_from: stop
+
+# - hosts: controller
+#   tags:
+#     - stop-controller
+#   become: yes
+#   vars_files:
+#     - vars/stacks/controller/vars.yml
+#   tasks:
+#     - name: stop dnsmasq
+
+- hosts: all
+  tags:
+    - shutdown
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - pause:
+        prompt: shutdown?
+
+    - name: shutdown servers
+      shutdown:
+        delay: 15
+

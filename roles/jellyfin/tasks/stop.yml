@@ -1,0 +1,5 @@
+---
+- name: stop jellyfin
+  docker_container:
+    name: jellyfin
+    state: stopped

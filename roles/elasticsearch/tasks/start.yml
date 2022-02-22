@@ -1,0 +1,6 @@
+---
+- name: start elasticsearch
+  docker_container:
+    name: elasticsearch
+    restart: yes
+    state: started
