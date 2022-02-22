@@ -1,0 +1,83 @@
+---
+# Install dockerized jellyfin on raspberry pi 4 running ubuntu server
+
+# Use:
+
+# Deploying on clean ubuntu server
+# - ansible-playbook jellyfin_playbook.yml -i hosts.ini
+#
+# If docker is already installed
+# - ansible-playbook jellyfin_playbook.yml -i hosts.ini --skip-tags meta
+#
+# If media drives are already mounted
+# - ansible-playbook jellyfin_playbook.yml -i hosts.ini --skip-tags drives
+#
+# Once jellyfin is setup, snapshot the config directory and store offsite
+# - ansible-playbook jellyfin_playbook.yml -i hosts.ini --tags snapshot --skip-tags meta
+#
+# To use the snapshotted config directory on a fresh install
+# - ansible-playbook jellyfin_playbook.yml -i hosts.ini -e restore_snapshot=jellyfin_backup-2022-02-07T04:30:10Z.tar.gz
+########################################################################
+
+- hosts: jellyfin
+  tags: install
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: install jellyfin
+      include_role:
+        name: jellyfin
+
+- hosts: jellyfin
+  tags: metricbeat
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: install metricbeat
+      block:
+        - set_fact:
+            es_hosts: "{{ ['http://' + item + ':9200'] + es_hosts|default([]) }}"
+          with_items: "{{ groups['monitor'] }}"
+
+        - include_role:
+            name: metricbeat
+          vars:
+            beat_hostname: "jellyfin"
+            elasticsearch_output_hosts: "{{ es_hosts }}"
+
+- hosts: jellyfin
+  tags: filebeat
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: install filebeat
+      block:
+        - set_fact:
+            es_hosts: "{{ ['http://' + item + ':9200'] + es_hosts|default([]) }}"
+          with_items: "{{ groups['monitor'] }}"
+
+        - include_role:
+            name: filebeat
+          vars:
+            filebeat_paths:
+              - source: something #
+                target: #somethings
+            elasticsearch_output_hosts: "{{ es_hosts }}"
+
+- hosts: jellyfin
+  tags:
+    - never
+    - backup
+    - snapshot
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: backup config directory
+      include_role:
+        name: jellyfin
+        tasks_from: snapshot
+

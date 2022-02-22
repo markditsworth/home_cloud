@@ -1,0 +1,9 @@
+---
+media_volumes:
+  - /home/mark/ssd1
+  - /home/mark/ssd2
+home_directory: /home/mark/jellyfin
+local_backup_store: /media/mark/WD/Snapshots/jellyfin/
+docker_image: linuxserver/jellyfin
+image_tag: latest
+max_snapshots: 3
