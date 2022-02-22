@@ -63,8 +63,8 @@
             name: filebeat
           vars:
             filebeat_paths:
-              - source: something #
-                target: #somethings
+              - source: /home/mark/jellyfin/log/
+                target: /etc/jellyfin/log/
             elasticsearch_output_hosts: "{{ es_hosts }}"
 
 - hosts: jellyfin

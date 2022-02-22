@@ -14,7 +14,8 @@
     path: "{{ home_directory }}/*"
     dest: "{{ backup_tar }}"
     exclude_path:
-      - "{{ home_directory }}/logs"
+      - "{{ home_directory }}/log"
+      - "{{ home_directory }}/cache"
 
 - name: ensure backup store exists
   file:

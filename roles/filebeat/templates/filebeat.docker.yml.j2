@@ -14,7 +14,7 @@ filebeat.modules:
 filebeat.inputs:
   - type: log
     enabled: true
-    paths: {{ filebeat_logs }}
+    paths: {{ filebeat_logs }}*
 
   - type: container
     enabled: true
