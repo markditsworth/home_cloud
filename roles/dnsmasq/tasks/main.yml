@@ -1,0 +1,21 @@
+---
+- name: install dnsmasq
+  apt:
+    update_cache: yes
+    name: dnsmasq
+    state: latest
+
+- name: start dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes
+
+- name: backup defualt configuration file
+  copy:
+    src: /etc/dnsmasq.conf
+    dest: /etc/dnsmasq.conf.old
+    remote_src: yes
+
+- name: 
+    
