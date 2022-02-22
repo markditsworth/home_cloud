@@ -63,14 +63,14 @@
     state: restarted
     daemon_reload: yes
 
-- name: pull emby docker image
+- name: pull jellyfin docker image
   docker_image:
     state: present
     tag: "{{ image_tag }}"
     name: "{{ docker_image }}"
     source: pull
 
-- name: run emby server
+- name: run jellyfin server
   docker_container:
     image: "{{ docker_image }}:{{ image_tag }}"
     name: jellyfin
