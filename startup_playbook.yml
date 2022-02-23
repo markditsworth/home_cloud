@@ -1,0 +1,65 @@
+---
+- hosts: monitor
+  tags:
+    - start-monitor
+  become: yes
+  vars_files:
+    - vars/stacks/monitor/vars.yml
+  tasks:
+    - name: start elasticsearch
+      run_once: yes
+      tags:
+        - start-es
+        - start-elastic
+        - start-elasticsearch
+      include_role:
+        name: elasticsearch
+        tasks_from: start
+
+    - name: start grafana
+      run_once: yes
+      tags:
+        - start-grafana
+      include_role:
+        name: grafana
+        tasks_from: start
+
+- hosts: jellyfin
+  tags:
+    - start-jellyfin
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: start jellyfin
+      include_role:
+        name: jellyfin
+        tasks_from: start
+
+- hosts: all
+  tags:
+    - start-metricbeat
+    - start-beats
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: start metricbeat
+      include_role:
+        name: metricbeat
+        tasks_from: start
+   
+- hosts: jellyfin
+  tags:
+    - start-filebeat
+    - start-beats
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: start filebeat
+      include_role:
+        name: filebeat
+        tasks_from: start
