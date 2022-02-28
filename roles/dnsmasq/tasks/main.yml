@@ -4,18 +4,32 @@
     update_cache: yes
     name: dnsmasq
     state: latest
+  when: install | default(false)
 
 - name: start dnsmasq
   service:
     name: dnsmasq
     state: started
     enabled: yes
+  when: install | default(false)
 
-- name: backup defualt configuration file
+- name: backup default configuration file
   copy:
-    src: /etc/dnsmasq.conf
-    dest: /etc/dnsmasq.conf.old
+    src: /etc/config/dhcp
+    dest: /etc/config/dhcp.old
     remote_src: yes
 
-- name: 
+- name: deploy configuration file
+  template:
+    src: dhcp.j2
+    dest: /etc/config/dhcp
+    owner: root
+    group: root
+    mode: 600
+
+- name: restart dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted
+
     
