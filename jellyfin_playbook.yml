@@ -38,8 +38,7 @@
     - name: install metricbeat
       block:
         - set_fact:
-            es_hosts: "{{ ['http://' + item + ':9200'] + es_hosts|default([]) }}"
-          with_items: "{{ groups['monitor'] }}"
+            es_hosts: "{{ ['http://monitor.lan:9200'] }}"
 
         - include_role:
             name: metricbeat
@@ -56,8 +55,7 @@
     - name: install filebeat
       block:
         - set_fact:
-            es_hosts: "{{ ['http://' + item + ':9200'] + es_hosts|default([]) }}"
-          with_items: "{{ groups['monitor'] }}"
+            es_hosts: "{{ ['http://monitor.lan:9200'] }}"
 
         - include_role:
             name: filebeat

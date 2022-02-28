@@ -50,6 +50,8 @@ def generate_inventory(ip_dict):
             line += f"{ip}\n"
         line += "\n"
         contents += line
+    contents += "[router]\n"
+    contents += "192.168.1.1\n"
     return contents
 
 def write_to_file(inventory, filename="hosts.ini"):
