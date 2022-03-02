@@ -10,7 +10,7 @@
     upgrade_setting: dist
   when: dist_upgrade
 
-- name: Update apt-cache and do dist upgrade
+- name: Update apt-cache and do {{ upgrade_setting }} upgrade
   apt:
     update_cache: yes
     cache_valid_time: 3600
