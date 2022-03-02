@@ -4,6 +4,8 @@
   tags:
     - controller
   become: yes
+  vars_files:
+    - vars/stacks/controller/vars.yml
   tasks:
     - name: update
       include_role:
@@ -14,6 +16,8 @@
   tags:
     - jellyfin
   become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
   tasks:
     - name: stop containers
       include_role:
@@ -50,6 +54,8 @@
   tags:
     - monitor
   become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
   tasks:
     - name: stop metricbeat
       include_role:
@@ -60,6 +66,8 @@
   tags:
     - monitor
   become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
   tasks:
     - name: stop filebeat
       include_role:
@@ -70,6 +78,8 @@
   tags:
     - monitor
   become: yes
+  vars_files:
+    - vars/stacks/monitor/vars.yml
   tasks:
     - name: stop containers
       include_role:
@@ -108,6 +118,8 @@
   tags:
     - monitor
   become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
   tasks:
     - name: start metricbeat
       include_role:
@@ -118,6 +130,8 @@
   tags:
     - monitor
   become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
   tasks:
     - name: start filebeat
       include_role:
