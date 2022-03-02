@@ -46,3 +46,36 @@
         - ansible
       include_role:
         name: ansible
+    
+    - name: configure update schedule
+      tags:
+        - update-schedule
+      block:
+        - name: ensure metricbeat is started on reboot
+          cron:
+            name: start metricbeat on reboot
+            user: root
+            job: docker start metricbeat
+            special_time: reboot
+
+        - name: configure update schedules
+          cron:
+            name: update {{ item.name }}
+            user: mark
+            weekday: "{{ item.weekday }}"
+            hour: "{{ item.hour }}"
+            minute: "{{ item.minute }}"
+            job: ansible-playbook /home/mark/home_cloud/update_playbook -i /home/mark/home_cloud/hosts.ini --tags "{{ item.name }}" --skip-tags meta
+          with_items:
+            - name: controller
+              weekday: 0  # sunday
+              hour: 8     # 2am central
+              minute: 0
+            - name: jellyfin
+              weekday: 2  # tuesday
+              hour: 8
+              minute: 0
+            - name: monitor
+              weekday: 4  # thursday
+              hour: 8
+              minute: 0
