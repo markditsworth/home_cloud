@@ -10,11 +10,9 @@
   docker_container:
     image: "{{ docker_image }}:{{ image_tag }}"
     name: kibana
-    restart: yes
-    restart_policy: on-failure
-    restart_retries: 20
+    restart: no
     auto_remove: no
     detach: yes
     network_mode: host
     env:
-      ELASTICSEARCH_HOSTS: "http://localhost:9200"
+      ELASTICSEARCH_HOSTS: "http://monitor.lan:9200"

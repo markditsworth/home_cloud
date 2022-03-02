@@ -1,0 +1,7 @@
+---
+- name: start kibana
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: kibana
+    state: absent
+    force_kill: yes

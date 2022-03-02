@@ -1,0 +1,27 @@
+---
+# Spin up: ansible-playbook kibana_playbook.yml --ask-become-pass --tags start --skip-tags meta
+#
+# Spin down: ansible-playbook kibana_playbook.yml --ask-become-pass --tags stop --skip-tags meta
+- hosts: localhost
+  connection: local
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: run kibana
+      tags:
+        - start
+      include_role:
+        name: kibana
+        tasks_from: main
+      vars:
+        image_tag: "7.17.0"
+    
+    - name: stop kibana
+      tags:
+        - stop
+        - never
+      include_role:
+        name: kibana
+        tasks_from: delete
+      vars:
+        image_tag: "7.17.0"
