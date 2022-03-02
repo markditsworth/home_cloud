@@ -74,11 +74,11 @@
   vars_files:
     - vars/stacks/jellyfin/vars.yml
   tasks:
-    - name: snapshot jellyfin data
-      tags: jellyfin-snapshot
-      include_role:
-        name: jellyfin
-        tasks_from: snapshot
+    # - name: snapshot jellyfin data
+    #   tags: jellyfin-snapshot
+    #   include_role:
+    #     name: jellyfin
+    #     tasks_from: snapshot
     
     - name: stop jellyfin
       tags:
@@ -86,15 +86,6 @@
       include_role:
         name: jellyfin
         tasks_from: stop
-
-# - hosts: controller
-#   tags:
-#     - stop-controller
-#   become: yes
-#   vars_files:
-#     - vars/stacks/controller/vars.yml
-#   tasks:
-#     - name: stop dnsmasq
 
 - hosts: monitor,jellyfin
   tags:
