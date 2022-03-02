@@ -1,0 +1,125 @@
+---
+- hosts: controller
+  connection: local
+  tags:
+    - controller
+  become: yes
+  tasks:
+    - name: update
+      include_role:
+        name: update
+        tasks_from: main
+
+- hosts: jellyfin
+  tags:
+    - jellyfin
+  become: yes
+  tasks:
+    - name: stop containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: stop
+      with_items:
+        - jellyfin
+        - metricbeat
+        - filebeat
+    
+    - name: update
+      include_role:
+        name: update
+        tasks_from: main
+    
+    - name: start containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: start
+      with_items:
+        - metricbeat
+        - filebeat
+        - jellyfin
+    
+    - name: wait a bit for containers to init
+      pause:
+        seconds: 45
+    
+    - name: ensure jellyfin server is running
+      wait_for:
+        port: 8096
+
+- hosts: jellyfin, controller, monitor
+  tags:
+    - monitor
+  become: yes
+  tasks:
+    - name: stop metricbeat
+      include_role:
+        name: metricbeat
+        tasks_from: stop
+
+- hosts: jellyfin
+  tags:
+    - monitor
+  become: yes
+  tasks:
+    - name: stop filebeat
+      include_role:
+        name: filebeat
+        tasks_from: stop
+
+- hosts: monitor
+  tags:
+    - monitor
+  become: yes
+  tasks:
+    - name: stop containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: stop
+      with_items:
+        - elasticsearch
+        - grafana
+    
+    - name: update
+      include_role:
+        name: update
+        tasks_from: main
+    
+    - name: start containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: start
+      with_items:
+        - elasticsearch
+        - grafana
+
+    - name: wait a bit for containers to init
+      pause:
+        seconds: 45
+    
+    - name: ensure services are running
+      wait_for:
+        port: "{{ item }}"
+      with_items:
+        - 9200  # elasticsearch
+        - 9300  # elasticsearch
+        - 3000  # grafana
+
+- hosts: jellyfin, controller, monitor
+  tags:
+    - monitor
+  become: yes
+  tasks:
+    - name: start metricbeat
+      include_role:
+        name: metricbeat
+        tasks_from: start
+
+- hosts: jellyfin
+  tags:
+    - monitor
+  become: yes
+  tasks:
+    - name: start filebeat
+      include_role:
+        name: filebeat
+        tasks_from: start

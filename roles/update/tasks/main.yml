@@ -24,3 +24,8 @@
 - name: Reboot if required
   reboot:
   when: reboot_required_file.stat.exists == true
+
+- name: Wait for host to come back up
+  pause:
+    minutes: 2
+  when: reboot_required_file.stat.exists == true
