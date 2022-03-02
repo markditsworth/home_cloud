@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    dist_upgrade: "{{ upgrade_dist | default(no) }}"
+    dist_upgrade: "{{ upgrade_dist | default('no') }}"
 
 - set_fact:
     upgrade_setting: safe
