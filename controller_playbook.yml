@@ -65,7 +65,7 @@
             weekday: "{{ item.weekday }}"
             hour: "{{ item.hour }}"
             minute: "{{ item.minute }}"
-            job: /usr/local/bin/ansible-playbook /home/mark/home_cloud/update_playbook -i /home/mark/home_cloud/hosts.ini --tags "{{ item.name }}" --skip-tags meta
+            job: /usr/local/bin/ansible-playbook /home/mark/home_cloud/update_playbook.yml -i /home/mark/home_cloud/hosts.ini --tags "{{ item.name }}" --skip-tags meta
           with_items:
             - name: controller
               weekday: 0  # sunday
