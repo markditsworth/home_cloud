@@ -28,11 +28,11 @@
     
     - pause:
         prompt: "src and dest look okay?"
-        
+
     - name: copy files
       copy:
-        dest: /home/mark/ssd2/TV/Star Trek The Next Generation/"
+        dest: "{{ destination }}"
         group: root
         owner: root
         mode: 0755
-        src: "/media/mark/WD/Videos/TV/Star Trek TNG/"
+        src: "{{ source }}"
