@@ -1,0 +1,38 @@
+---
+- hosts: jellyfin
+  become: yes
+  vars_files:
+    - vars/stacks/jellyfin/vars.yml
+  tasks:
+    - name: define media
+      set_fact:
+        media: media_type | default("Movies")
+    
+    - name: define ssd location
+      set_fact:
+        ssd: drive | default("ssd2")
+    
+    - name: setup source location
+      set_fact:
+        source: "/media/mark/WD/Videos/{{ media }}/{{ src_dir }}/"
+    
+    - name: setup destination location
+      set_fact:
+        destination: "/home/mark/{{ ssd }}/{{ media }}/{{ dst_dir }}"
+    
+    - debug:
+        var: "{{ item }}"
+      with_items:
+        - source
+        - destination
+    
+    - pause:
+        prompt: "src and dest look okay?"
+        
+    - name: copy files
+      copy:
+        dest: /home/mark/ssd2/TV/Star Trek The Next Generation/"
+        group: root
+        owner: root
+        mode: 0755
+        src: "/media/mark/WD/Videos/TV/Star Trek TNG/"

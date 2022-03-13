@@ -7,6 +7,13 @@
   vars_files:
     - vars/stacks/controller/vars.yml
   tasks:
+    - name: stop containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: stop
+      with_items:
+        - metricbeat
+
     - name: update
       include_role:
         name: update
