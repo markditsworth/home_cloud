@@ -6,11 +6,11 @@
   tasks:
     - name: define media
       set_fact:
-        media: "{{ media_type | default("Movies") }}"
+        media: "{{ media_type | default('Movies') }}"
     
     - name: define ssd location
       set_fact:
-        ssd: "{{ drive | default("ssd2") }}"
+        ssd: "{{ drive | default('ssd2') }}"
     
     - name: setup source location
       set_fact:
