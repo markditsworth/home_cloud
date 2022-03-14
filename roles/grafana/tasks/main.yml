@@ -22,12 +22,12 @@
     mode: 0755
   when: restore_snapshot is defined
 
-- name: restart docker
-  service:
-    name: docker
-    state: restarted
-    daemon_reload: yes
-  when: not skip_docker_restart
+# - name: restart docker
+#   service:
+#     name: docker
+#     state: restarted
+#     daemon_reload: yes
+#   when: not skip_docker_restart
 
 - name: pull grafana docker image
   docker_image:

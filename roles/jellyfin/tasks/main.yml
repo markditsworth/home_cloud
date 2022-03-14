@@ -57,11 +57,11 @@
 - debug:
     var: mounts
 
-- name: restart docker
-  service:
-    name: docker
-    state: restarted
-    daemon_reload: yes
+# - name: restart docker
+#   service:
+#     name: docker
+#     state: restarted
+#     daemon_reload: yes
 
 - name: pull jellyfin docker image
   docker_image:

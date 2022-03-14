@@ -14,11 +14,11 @@
     mode: 0777
     recurse: yes
 
-- name: restart docker
-  service:
-    name: docker
-    state: restarted
-    daemon_reload: yes
+# - name: restart docker
+#   service:
+#     name: docker
+#     state: restarted
+#     daemon_reload: yes
 
 - name: pull elasticsearch docker image
   docker_image:
