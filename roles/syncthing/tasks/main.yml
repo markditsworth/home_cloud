@@ -1,0 +1,47 @@
+---
+
+- name: create "{{ sync_directory }}"
+  file:
+    path: "{{ sync_directory }}"
+    recurse: yes
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- set_fact:
+    mounts:
+      - propagation: rshared
+        read_only: no
+        source: "{{ sync_directory }}"
+        target: /var/syncthing
+        type: bind   
+
+- debug:
+    var: mounts
+
+- name: pull syncthing docker image
+  docker_image:
+    state: present
+    tag: "{{ image_tag }}"
+    name: "{{ docker_image }}"
+    source: pull
+
+- name: run syncthing server
+  docker_container:
+    image: "{{ docker_image }}:{{ image_tag }}"
+    name: syncthing
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 20
+    auto_remove: no
+    detach: yes
+    network_mode: host
+    env:
+      PUID: "{{ uid | default(1000) | int }}"
+      PGID: "{{ gid | default(1000) | int }}"
+    mounts: "{{ mounts }}"
+
+
+    
+    

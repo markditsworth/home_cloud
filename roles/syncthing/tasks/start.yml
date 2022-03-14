@@ -1,0 +1,6 @@
+---
+- name: start syncthing
+  docker_container:
+    name: syncthing
+    restart: yes
+    state: started

@@ -27,6 +27,20 @@
         name: filebeat
         tasks_from: stop
 
+- hosts: controller
+  tags:
+    - stop-syncthing
+  connection: local
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/controller/vars.yml
+  tasks:
+    - name: stop syncthing
+      include_role:
+        name: syncthing
+        tasks_from: stop
+
 - hosts: monitor
   tags:
     - stop-monitor

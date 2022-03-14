@@ -36,6 +36,20 @@
         name: jellyfin
         tasks_from: start
 
+- hosts: controller
+  tags:
+    - start-syncthing
+  connection: local
+  become: yes
+  gather_facts: no
+  vars_files:
+    - vars/stacks/controller/vars.yml
+  tasks:
+    - name: start syncthing
+      include_role:
+        name: syncthing
+        tasks_from: start
+
 - hosts: all
   tags:
     - start-metricbeat

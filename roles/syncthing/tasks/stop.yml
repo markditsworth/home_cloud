@@ -1,0 +1,5 @@
+---
+- name: stop syncthing
+  docker_container:
+    name: syncthing
+    state: stopped
