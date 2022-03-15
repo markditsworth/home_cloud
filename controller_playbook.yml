@@ -61,6 +61,8 @@
         - name: install syncthing
           include_role:
             name: syncthing
+          vars:
+            sync_directory: /media/mark/WD/Sync
         
         - name: ensure syncthing is started on reboot
           cron:

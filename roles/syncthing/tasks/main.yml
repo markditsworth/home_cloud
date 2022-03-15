@@ -6,8 +6,29 @@
     recurse: yes
     state: directory
     mode: 0755
-    owner: root
-    group: root
+    owner: mark
+    group: mark
+
+- name: get uid and gid
+  block:
+    - name: run getent
+      getent:
+        database: passwd
+        key: mark
+    
+    - name: get uid
+      set_fact:
+        user_uid: "{{ ansible_facts.getent_passwd.mark[1] }}"
+
+    - name: get gid
+      set_fact:
+        user_gid: "{{ ansible_facts.getent_passwd.mark[2] }}"
+    
+    - debug:
+        var: user_uid
+    
+    - debug:
+        var: user_gid
 
 - set_fact:
     mounts:
@@ -38,8 +59,8 @@
     detach: yes
     network_mode: host
     env:
-      PUID: "{{ uid | default(1000) | int }}"
-      PGID: "{{ gid | default(1000) | int }}"
+      PUID: "{{ user_uid | default(1000) | int }}"
+      PGID: "{{ user_gid | default(1000) | int }}"
     mounts: "{{ mounts }}"
 
 
