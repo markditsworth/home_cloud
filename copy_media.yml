@@ -15,6 +15,12 @@
     - name: setup source location
       set_fact:
         source: "/media/mark/WD/Videos/{{ media }}/{{ src_dir }}/"
+      when: src_dir is defined
+    
+    - name: setup source file
+      set_fact:
+        source: "/media/mark/WD/Videos/{{ media }}/{{ src_file }}"
+      when: src_file is defined
     
     - name: setup destination location
       set_fact:
