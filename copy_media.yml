@@ -24,7 +24,7 @@
     
     - name: setup destination location
       set_fact:
-        destination: "/home/mark/{{ ssd }}/{{ media }}/{{ dst_dir }}"
+        destination: "/home/mark/{{ ssd }}/{{ media }}/{{ dst_dir | default('') }}"
     
     - debug:
         var: "{{ item }}"
