@@ -2,8 +2,24 @@
 - hosts: worker
   become: yes
   gather_facts: no
+  include_vars:
+    - vars/stacks/worker/vars.yml
   tasks:
+    - name: install metricbeat
+      tags:
+        - beats
+        - metricbeat
+      include_role:
+        name: metricbeat
+      vars:
+        beat_hostname: "worker"
+        elasticsearch_output_hosts:
+          - http://monitor.lan:9200
+
     - name: setup openvpn
+      tags:
+        - openvpn
+        - vpn
       include_role:
         name: openvpn
         tasks_from: client
