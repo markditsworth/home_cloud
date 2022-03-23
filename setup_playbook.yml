@@ -57,6 +57,12 @@
     - name: set hostname
       hostname:
         name: "{{ ansible_hosts }}"
+      when: hostname is not defined
+
+    - name: set hostname
+      hostname:
+        name: "{{ hostname }}"
+      when: hostname is defined
     
     - name: disable autoupdate to save CPU
       lineinfile:

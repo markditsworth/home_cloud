@@ -11,7 +11,7 @@ MAC_ADDRESSES = {
     "e4:5f:01:87:35:73": "controller",
     "dc:a6:32:d6:cf:fb": "monitor",
     "dc:a6:32:bb:cb:50": "jellyfin",
-    "e4:5f:01:73:87:6a": "worker-1",
+    "e4:5f:01:73:87:6a": "worker",
 }
 
 def mapDevices(broadcast_addr=BROADCAST):
