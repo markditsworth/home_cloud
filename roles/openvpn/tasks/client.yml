@@ -1,0 +1,116 @@
+---
+- name: install openvpn
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - openvpn
+    - network-manager-openvpn
+
+- pause:
+    prompt: "okay?"
+
+- name: create auth file
+  file:
+    path: /etc/openvpn/auth.txt
+    state: touch
+    owner: root
+    group: root
+    mode: 0600
+  register: auth_file_creation
+
+- debug:
+    var: auth_file_creation
+
+- name: populate auth file if needed
+  block:
+    - debug:
+        msg: "{{ openvpn_user }}"
+
+    - lineinfile:
+        line: "{{ openvpn_user }}"
+        insertafter: EOF
+        path: /etc/openvpn/auth.txt
+        state: present
+    
+    - debug:
+        msg: "{{ openvpn_pass }}"
+
+    - lineinfile:
+        line: "{{ openvpn_pass }}"
+        insertafter: EOF
+        path: /etc/openvpn/auth.txt
+        state: present
+  when: auth_file_creation.diff.before.state == "absent" or auth_file_creation.size == 0
+
+- name: copy configuration files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/openvpn/
+    owner: root
+    group: root
+    mode: 0600
+  with_fileglob:
+    - configs/*.ovpn
+
+- name: get all openvpn configs shipped
+  find:
+    paths: "/etc/openvpn"
+    recurse: no
+    patterns: "*.ovpn"
+  register: files
+
+- set_fact:
+    ovpn_files: "{{ files.files | map(attribute='path') }}"
+
+- debug:
+    var: ovpn_files
+
+- name: add auth to config files
+  lineinfile:
+    path: "{{ item }}"
+    regexp: "^auth-user-pass"
+    line: "auth-user-pass auth.txt"
+    state: present
+  with_items: "{{ ovpn_files }}"
+
+- name: disable ipv6
+  sysctl:
+    name: net.ipv6.conf.{{ item }}.disable_ipv6
+    value: 1
+  with_items:
+    - all
+    - default
+
+- name: copy validation script
+  copy:
+    src: validate.sh
+    dest: /etc/openvpn/validate.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: setup opevpn service
+  copy:
+    src: openvpn_client.service
+    dest: /lib/systemd/system/openvpn.service
+    owner: root
+    group: root
+    mode: 0644
+    
+- name: start openvpn
+  service:
+    name: openvpn
+    state: started
+    enabled: yes
+
+- name: verify functionality
+  block:
+    - pause:
+        seconds: 30
+    
+    - command: /etc/openvpn/validate.sh
+      register: validation_output
+    
+    - debug:
+        var: validation_output

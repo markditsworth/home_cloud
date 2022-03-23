@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenVPN
+
+[Service]
+WorkingDirectory=/etc/openvpn
+ExecStart=/usr/sbin/openvpn /etc/openvpn/se-nl-01.protonvpn.com.udp.ovpn
+User=root
+Group=root
+PermissionsStartOnly=true
+Restart=always
+RestartSec=30
+KillSignal=SIGTERM
+SendSIGKILL=no
+SuccessExitStatus=0
