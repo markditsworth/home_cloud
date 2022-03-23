@@ -1,8 +1,8 @@
 ---
 - hosts: worker
   become: yes
-  gather_facts: no
-  include_vars:
+  gather_facts: yes
+  vars_files:
     - vars/stacks/worker/vars.yml
   tasks:
     - name: install metricbeat
