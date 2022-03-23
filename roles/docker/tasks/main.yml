@@ -41,6 +41,12 @@
     line: "{{ deb_command }}"
     create: yes
 
+- name: stop openvpn
+  service:
+    name: openvpn-client@{{ vpn_config }}
+    state: stopped
+  when: vpn_config is defined
+
 - name: install docker
   apt:
     force_apt_get: yes
@@ -56,4 +62,10 @@
     executable: pip3
     name: docker
     state: latest
+
+- name: start openvpn
+  service:
+    name: openvpn-client@{{ vpn_config }}
+    state: started
+  when: vpn_config is defined
     
