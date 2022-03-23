@@ -1,3 +1,5 @@
 ---
 docker_image: "lscr.io/linuxserver/qbittorrent"
 iamge_tag: latest
+config_directory: /home/mark/qbittorrent/config
+downloads_directory: /home/mark/qbittorrent/downloads
