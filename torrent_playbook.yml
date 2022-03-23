@@ -1,0 +1,9 @@
+---
+- hosts: worker
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: setup openvpn
+      include_role:
+        name: openvpn
+        tasks_from: client
