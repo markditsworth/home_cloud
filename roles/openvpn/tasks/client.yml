@@ -6,9 +6,7 @@
   with_items:
     - openvpn
     - network-manager-openvpn
-
-- pause:
-    prompt: "okay?"
+    - traceroute # needed for validation
 
 - name: create auth file
   file:
@@ -53,9 +51,6 @@
   with_fileglob:
     - configs/*.ovpn
 
-- pause:
-    prompt: "okay?"
-
 - name: get all openvpn configs shipped
   find:
     paths: "{{ openvpn_client_directory }}"
@@ -68,9 +63,6 @@
 
 - debug:
     var: ovpn_files
-
-- pause:
-    prompt: "okay?"
 
 - name: add auth to config files
   lineinfile:
@@ -108,7 +100,11 @@
         seconds: 30
     
     - command: /etc/openvpn/validate.sh
-      register: validation_output
+      register: validation
     
     - debug:
-        var: validation_output
+        var: validation
+    
+    - assert:
+      that:
+        - validation.rc == 0
