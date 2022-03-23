@@ -1,0 +1,3 @@
+---
+docker_image: "lscr.io/linuxserver/qbittorrent"
+iamge_tag: latest

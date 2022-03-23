@@ -23,3 +23,12 @@
       include_role:
         name: openvpn
         tasks_from: client
+    
+    - name: install and configure qbittorrent
+      tags:
+        - torrent
+        - bittorrent
+        - qbittorrent
+      include_role:
+        name: qbittorrent
+        tasks_from: main
