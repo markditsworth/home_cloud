@@ -12,7 +12,7 @@
 
 - name: create auth file
   file:
-    path: /etc/openvpn/auth.txt
+    path: "{{ openvpn_client_directory }}/auth.txt"
     state: touch
     owner: root
     group: root
@@ -30,7 +30,7 @@
     - lineinfile:
         line: "{{ openvpn_user }}"
         insertafter: EOF
-        path: /etc/openvpn/auth.txt
+        path: "{{ openvpn_client_directory }}/auth.txt"
         state: present
     
     - debug:
@@ -39,23 +39,26 @@
     - lineinfile:
         line: "{{ openvpn_pass }}"
         insertafter: EOF
-        path: /etc/openvpn/auth.txt
+        path: "{{ openvpn_client_directory }}/auth.txt"
         state: present
   when: auth_file_creation.diff.before.state == "absent" or auth_file_creation.size == 0
 
 - name: copy configuration files
   copy:
     src: "{{ item }}"
-    dest: /etc/openvpn/
+    dest: "{{ openvpn_client_directory }}/{{ item.split('/')[-1].split('.')[0] }}.conf"
     owner: root
     group: root
     mode: 0600
   with_fileglob:
     - configs/*.ovpn
 
+- pause:
+    prompt: "okay?"
+
 - name: get all openvpn configs shipped
   find:
-    paths: "/etc/openvpn"
+    paths: "{{ openvpn_client_directory }}"
     recurse: no
     patterns: "*.ovpn"
   register: files
@@ -70,7 +73,7 @@
   lineinfile:
     path: "{{ item }}"
     regexp: "^auth-user-pass"
-    line: "auth-user-pass auth.txt"
+    line: "auth-user-pass {{ openvpn_client_directory }}/auth.txt"
     state: present
   with_items: "{{ ovpn_files }}"
 
@@ -89,18 +92,10 @@
     owner: root
     group: root
     mode: 0755
-
-- name: setup opevpn service
-  copy:
-    src: openvpn_client.service
-    dest: /lib/systemd/system/openvpn.service
-    owner: root
-    group: root
-    mode: 0644
     
 - name: start openvpn
   service:
-    name: openvpn
+    name: openvpn-client@se-nl-01
     state: started
     enabled: yes
 
