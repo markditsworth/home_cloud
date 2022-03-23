@@ -1,7 +1,7 @@
 ---
 - name: create directories
   file:
-    path: {{ item }}
+    path: "{{ item }}"
     state: directory
     recurse: yes
     owner: mark
