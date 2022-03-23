@@ -60,7 +60,7 @@
   find:
     paths: "{{ openvpn_client_directory }}"
     recurse: no
-    patterns: "*.ovpn"
+    patterns: "*.conf"
   register: files
 
 - set_fact:
@@ -68,6 +68,9 @@
 
 - debug:
     var: ovpn_files
+
+- pause:
+    prompt: "okay?"
 
 - name: add auth to config files
   lineinfile:
