@@ -106,5 +106,5 @@
         var: validation
     
     - assert:
-      that:
-        - validation.rc == 0
+        that:
+          - validation.rc == 0
