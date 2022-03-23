@@ -14,6 +14,7 @@
 - name: reboot
   reboot:
     reboot_timeout: 600
+  when: restart_after_apt|default(true)
 
 - name: add docker GPG key
   apt_key:
