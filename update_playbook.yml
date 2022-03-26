@@ -82,7 +82,7 @@
         - metricbeat
         - qbittorrent
     
-    - name: update:
+    - name: update
       include_role:
         name: update
         tasks_from: main
