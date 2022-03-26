@@ -1,0 +1,36 @@
+---
+- hosts: worker
+  tags:
+    - worker
+    - torrent
+  become: yes
+  vars_files:
+    - vars/stacks/worker/vars.yml
+  tasks:
+    - name: stop containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: stop
+      with_items:
+        - metricbeat
+        - qbittorrent
+    
+    - reboot:
+    
+    - name: restart vpn
+      block:
+        - sysctl:
+            name: net.ipv6.conf.all.disable_ipv6
+            value: 1
+
+        - service:
+            name: openvpn-client@se-nl-01
+            state: restarted
+      
+    - pause:
+        seconds: 45
+    
+    - name: validate vpn
+      include_role:
+        name: openvpn
+        tasks_from: validate

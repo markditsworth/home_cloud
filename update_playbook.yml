@@ -88,12 +88,22 @@
         tasks_from: main
     
     - name: restart vpn
-      service:
-        name: openvpn-client@se-nl-01
-        state: restarted
-    
+      block:
+        - sysctl:
+            name: net.ipv6.conf.all.disable_ipv6
+            value: 1
+
+        - service:
+            name: openvpn-client@se-nl-01
+            state: restarted
+      
     - pause:
         seconds: 45
+    
+    - name: validate vpn
+      include_role:
+        name: openvpn
+        tasks_from: validate
     
     - name: restart containers
       include_role:

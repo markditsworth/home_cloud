@@ -1,5 +1,7 @@
 ---
 openvpn_client_directory: /etc/openvpn/client
+expected_country: "NL"
+#expected_country: "DE"
 openvpn_user: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   32313037363762653165376465303363316465326236666130326335656232343139313333376338

@@ -94,3 +94,7 @@
           weekday: 4  # thursday
           hour: 8
           minute: 0
+        - name: torrent
+          weekday: 3  # wednesday
+          hour: 8
+          minute: 0

@@ -1,0 +1,10 @@
+---
+- name: curl country info
+  shell: curl -s ipinfo.io/$(curl -s ifconfig.me) | jq -r '.country'
+  register: country
+
+- debug:
+    var: country
+
+- fail:
+  when: country != expected_country
