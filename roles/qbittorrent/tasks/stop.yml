@@ -1,0 +1,5 @@
+---
+- name: stop qbittorrent
+  docker_container:
+    name: qbittorrent
+    state: stopped

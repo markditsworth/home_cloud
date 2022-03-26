@@ -66,7 +66,44 @@
       wait_for:
         port: 8096
 
-- hosts: jellyfin, controller, monitor
+- hosts: worker
+  tags:
+    - worker
+    - torrent
+  become: yes
+  vars_files:
+    - vars/stacks/worker/vars.yml
+  tasks:
+    - name: stop containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: stop
+      with_items:
+        - metricbeat
+        - qbittorrent
+    
+    - name: update:
+      include_role:
+        name: update
+        tasks_from: main
+    
+    - name: restart vpn
+      service:
+        name: openvpn-client@se-nl-01
+        state: restarted
+    
+    - pause:
+        seconds: 45
+    
+    - name: restart containers
+      include_role:
+        name: "{{ item }}"
+        tasks_from: start
+      with_items:
+        - qbittorrent
+        - metricbeat
+
+- hosts: jellyfin, controller, monitor, worker
   tags:
     - monitor
   become: yes

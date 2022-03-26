@@ -1,0 +1,6 @@
+---
+- name: start qbittorrent
+  docker_container:
+    name: qbittorrent
+    restart: yes
+    state: started
