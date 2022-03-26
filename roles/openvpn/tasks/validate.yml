@@ -7,4 +7,4 @@
     var: country
 
 - fail:
-  when: country != expected_country
+  when: country.stdout != expected_country
