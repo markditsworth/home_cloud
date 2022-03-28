@@ -20,8 +20,8 @@
         name: update
         tasks_from: main
 
-    - name: start containers  # will only run if the update role does not have to rebook
-      include_role:           #  controller setup to start these containers on rebook via cron
+    - name: start containers  # will only run if the update role does not have to reboot
+      include_role:           #  controller setup to start these containers on reboot via cron
         name: "{{ item }}"
         tasks_from: start
       with_items:
