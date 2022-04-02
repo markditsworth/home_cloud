@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: jellyfin,monitor,controller,worker
   tags:
     - stop-metricbeat
     - stop-beats
