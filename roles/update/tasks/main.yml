@@ -22,7 +22,7 @@
   register: reboot_required_file
 
 - name: Reboot if required
-  reboot:
+  command: init 6
   when: reboot_required_file.stat.exists == true
 
 - name: Wait for host to come back up
