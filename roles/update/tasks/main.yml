@@ -25,11 +25,19 @@
     var: ansible_connection
 
 - fail:
+  when:
+    - ansible_connection == 'local'
 
 - name: Reboot if required
   reboot:
   when:
-    - 
+    - ansible_connection == 'ssh'
+    - reboot_required_file.stat.exists == true
+
+- name: Reboot if required
+  command: init 6
+  when:
+    - ansible_connection == 'local'
     - reboot_required_file.stat.exists == true
 
 - name: Wait for host to come back up
