@@ -21,13 +21,6 @@
     path: /var/run/reboot-required
   register: reboot_required_file
 
-- debug:
-    var: ansible_connection
-
-- fail:
-  when:
-    - ansible_connection == 'local'
-
 - name: Reboot if required
   reboot:
   when:
