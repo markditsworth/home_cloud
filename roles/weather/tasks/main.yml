@@ -34,6 +34,7 @@
   cron:
     name: weather forecast
     hour: "{{ forecast_hour }}"
+    minute: "{{ forecast_minute }}"
     job: "{{ forecast_job }}"
   when: enable_forecast
 
