@@ -1,0 +1,45 @@
+---
+- name: clone git repo
+  git:
+    dest: /home/mark/weather
+    repo: "{{ git_repo }}"
+
+- name: remove git
+  file:
+    path: /home/mark/weather/.git
+    recurse: yes
+    state: absent
+
+- name: chown repo
+  file:
+    path: /home/mark/weather
+    recurse: yes
+    state: directory
+    owner: mark
+    group: mark
+    mode: 0777
+
+- name: template configuration file
+  template:
+    src: config.json.j2
+    dest: /home/mark/weather/config.json
+    owner: mark
+    group: mark
+    mode: 0755
+
+- name: build container
+  shell: cd /home/mark/weather && make build
+
+- name: schedule forecast
+  cron:
+    name: weather forecast
+    hour: "{{ forecast_hour }}"
+    job: "{{ forecast_job }}"
+  when: enable_forecast
+
+- name: schedule alerts
+  cron:
+    name: weather alerts
+    minute: "{{ alert_minute }}"
+    job: "{{ alert_job }}"
+  when: enable_alerts
