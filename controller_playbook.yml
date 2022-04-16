@@ -71,6 +71,12 @@
             job: docker start syncthing
             special_time: reboot
     
+    - name: setup weather reports
+      tags:
+        - weather
+      include_role:
+        name: weather
+    
     - name: configure update schedule
       tags:
         - update-schedule
