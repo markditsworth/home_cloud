@@ -31,7 +31,7 @@ lat_lon: !vault |
 enable_forecast: true
 forecast_hour: 10 # utc 5-6am central
 forecast_minute: 0
-forecast_job: docker run -d --rm --user python-user -v /home/mark/weather:/home/python-user:rw weather_monitor --forecast
+forecast_job: /usr/bin/docker run -d --rm --user python-user -v /home/mark/weather:/home/python-user:rw weather_monitor --forecast
 enable_alerts: false
 alert_minute: "*/5"
-alert_job: docker run -d --rm --user python-user -v /home/mark/weather:/home/python-user:rw weather_monitor --alerts
+alert_job: /usr/bin/docker run -d --rm --user python-user -v /home/mark/weather:/home/python-user:rw weather_monitor --alerts

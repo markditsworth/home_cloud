@@ -1,0 +1,6 @@
+---
+- name: install openvpn
+  shell: opkg update && opkg install openvpn-openssl openvpn-easy-rsa
+
+- name: set environment variables
+  environment:
