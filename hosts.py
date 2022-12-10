@@ -37,10 +37,11 @@ def mac_to_ips(mapping):
     for mac in MAC_ADDRESSES.keys():
         name = MAC_ADDRESSES[mac]
         ip = mapping.get(mac)
-        if name in address_dict:
-            address_dict[name].append(ip)
-        elif name:
-            address_dict[name] = [ip]
+        if ip:
+            if name in address_dict:
+                address_dict[name].append(ip)
+            else:
+                address_dict[name] = [ip]
     return address_dict
 
 def generate_inventory(ip_dict):
